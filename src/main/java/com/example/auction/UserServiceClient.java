@@ -54,8 +54,9 @@ public interface UserServiceClient {
     Response placeBid(@PathParam("userId") Long userId, @PathParam("enchereId") Long enchereId, @QueryParam("amount") double amount);
 
     @POST
-    @Path("/{userId}/abandon-bid/{bidId}")
-    Response abandonBid(@PathParam("userId") Long userId, @PathParam("bidId") Long bidId);
+    @Path("/{userId}/abandon-bid/{enchereId}")
+    Response abandonBid(@PathParam("userId") Long userId, @PathParam("enchereId") Long enchereId);
+
     @GET
     @Path("/{userId}/bids")
     Response getUserEncheres(@PathParam("userId") Long userId);

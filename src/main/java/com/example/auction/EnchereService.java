@@ -101,7 +101,6 @@ public class EnchereService {
     @Transactional
     public String placerBid(Long enchereId,Long userId,double amount){
         Enchere enchere=enem.findEnchere(enchereId);
-        User user =userservice.getUserById(userId);
         if(enchere==null || !"active".equals(enchere.getStatus())){
             return "enchere not found!";
         }
@@ -115,12 +114,12 @@ public class EnchereService {
         enchere.getBids().add(bid);
         em.miseAjourEnchere(enchere);
         //fonction bech tzid fel tableau ta3 lista active encheres
-        userservice.addEnchereToActive(userId,enchereId);
+        //userservice.addEnchereToActive(userId,enchereId);
         pokemonService.addAuctionHistory(enchere.getPokemonId(), enchere);
         return "enchere mis";
     }
     //def reource w restclient user
-    @Transactional
+    /*@Transactional
     public void EnleverBid(Long enchereID,Long userId){
         Enchere enchere=findEnchereById(enchereID);
         Bid bid=em.getUserEnchereBid(enchereID,userId);
@@ -137,6 +136,48 @@ public class EnchereService {
                     });
         }
     }
+
+     */
+    @Transactional
+    public void EnleverBid(Long enchereID, Long userId) {
+        // Find the auction by its ID
+        Enchere enchere = findEnchereById(enchereID);
+        if (enchere == null) {
+            throw new IllegalArgumentException("Auction with ID " + enchereID + " not found.");
+        }
+
+        // Find the bid for the given user and auction
+        Bid bidToRemove = enchere.getBids().stream()
+                .filter(bid -> bid.getUserId().equals(userId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No bid found for user " + userId + " in auction " + enchereID));
+
+        // Remove the bid
+        enchere.getBids().remove(bidToRemove);
+        em2.remove(bidToRemove);
+
+        // Check if the bid being removed is the highest bid
+        if (enchere.getHighestBidderId() != null && enchere.getHighestBidderId().equals(userId)) {
+            // Reset the highest bid and bidder to the next highest bid
+            enchere.getBids().stream()
+                    .max((b1, b2) -> Double.compare(b1.getAmount(), b2.getAmount()))
+                    .ifPresentOrElse(
+                            nextHighestBid -> {
+                                enchere.setHighestBid(nextHighestBid.getAmount());
+                                enchere.setHighestBidderId(nextHighestBid.getUserId());
+                            },
+                            () -> {
+                                // If no bids are left, reset the highest bid and bidder
+                                enchere.setHighestBid(0);
+                                enchere.setHighestBidderId(null);
+                            }
+                    );
+
+            // Update the auction in the database
+            em2.merge(enchere);
+        }
+    }
+
 
     //chercher enchere par type de pokemon
 

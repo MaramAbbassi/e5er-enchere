@@ -42,10 +42,7 @@ public class EnchereResource {
     @Path("/{id}/{userId}/{Bid}")
     @Transactional
     public Response placerBid(@PathParam("id") Long id, @PathParam("userId") Long userID, @PathParam("Bid") double bid) {
-
         Enchere enchere = manager.findEnchere(id);
-
-
         String msg = es.placerBid(id, userID, bid);
 
         if ("ecnhere not found".equals(msg)) {
@@ -104,5 +101,17 @@ public class EnchereResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("une rerur est servenue").build();
         }
 
+    }
+
+    @DELETE
+    @Path("/{enchereId}/bids/{userId}")
+    @Transactional
+    public Response enleverBid(@PathParam("enchereId") Long enchereId, @PathParam("userId") Long userId) {
+        try {
+            es.EnleverBid(enchereId, userId);
+            return Response.ok("Bid removed successfully").build();
+        }
+        catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("An error occurred while removing the bid").build(); }
     }
 }
