@@ -1,0 +1,166 @@
+openapi: 3.0.3
+info:
+  title: Enchere API
+  version: 1.0.0
+  description: API pour gérer les enchères.
+paths:
+  /Encheres:
+    get:
+      summary: Obtenir toutes les enchères actives
+      responses:
+        '200':
+          description: Liste des enchères actives
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Enchere'
+    post:
+      summary: Ajouter une enchère aléatoire
+      operationId: createRandomAuction
+      responses:
+        '204':
+          description: Enchère créée avec succès
+
+  /Encheres/{id}/{userId}/{Bid}:
+    get:
+      summary: Placer une enchère
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID de l'enchère
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID de l'utilisateur
+        - name: Bid
+          in: path
+          required: true
+          schema:
+            type: number
+          description: Montant de la mise
+      responses:
+        '200':
+          description: Enchère mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enchere'
+        '404':
+          description: Enchère non trouvée
+        '400':
+          description: Mise trop faible
+
+  /Encheres/Enchere/{id}:
+    get:
+      summary: Obtenir une enchère par ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID de l'enchère
+      responses:
+        '200':
+          description: Enchère trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enchere'
+        '404':
+          description: Enchère non trouvée
+
+  /Encheres/{type}:
+    get:
+      summary: Obtenir les enchères par type
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Type des enchères
+      responses:
+        '200':
+          description: Liste des enchères par type
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Enchere'
+
+  /Encheres/{pokemonId}/addAuctionHistory:
+    post:
+      summary: Ajouter une enchère à un Pokémon
+      parameters:
+        - name: pokemonId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID du Pokémon
+      requestBody:
+        description: Détails de l'enchère
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Enchere'
+      responses:
+        '200':
+          description: Enchère ajoutée avec succès
+        '400':
+          description: Mauvaise requête
+        '500':
+          description: Erreur interne du serveur
+
+  /Encheres/{enchereId}/bids/{userId}:
+    delete:
+      summary: Supprimer une mise
+      parameters:
+        - name: enchereId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID de l'enchère
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID de l'utilisateur
+      responses:
+        '200':
+          description: Mise supprimée avec succès
+        '500':
+          description: Erreur interne du serveur
+
+components:
+  schemas:
+    Enchere:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID unique de l'enchère
+        montant:
+          type: number
+          description: Montant de la mise
+        utilisateur:
+          type: integer
+          description: ID de l'utilisateur
+        type:
+          type: string
+          description: Type d'enchère
+      required:
+        - id
+        - montant

@@ -39,6 +39,9 @@ public class Enchere  {
         this.dateExpiration = dateExpiration;
         this.Status = Status;
     }
+    public Long getId() {
+        return this.id;
+    }
 
     public Long getUserId() {
         return highestBidderId;

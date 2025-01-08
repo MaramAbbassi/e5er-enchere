@@ -12,7 +12,7 @@ public class EnchereScheduler {
     private EnchereService es;
     @Inject
     private EnchereManager em;
-    @Scheduled(every="1h")
+    @Scheduled(every="5m")
     public void ensureMinimumEnchere(){
         int activeEnchere= em.countActiveAuctions();
 

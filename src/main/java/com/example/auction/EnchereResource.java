@@ -32,6 +32,12 @@ public class EnchereResource {
 
 
     @POST
+    @Path("/{userid}/{pokemonid}/{amount}")
+    public Long createEnchere(@PathParam("userid") Long userid,@PathParam("pokemonid") Long pokemonid,@PathParam("amount") Long amount) {
+        return es.createEnchere(userid,pokemonid,amount);
+    }
+
+    @POST
     @Path("/creteEnchereAleatoire")
     public void creteEnchereAleatoire() {
         es.createAuctionAutomatically();

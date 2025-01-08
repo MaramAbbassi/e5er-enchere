@@ -189,5 +189,14 @@ public class EnchereService {
     }
      //fonction tasna3 enchere ki yotleb el user
 
-
+ public Long createEnchere(Long  userid,Long pokemonid,double amount) {
+        Enchere enchere=new Enchere();
+        enchere.setDateExpiration(LocalDateTime.now().plusHours(24));
+        enchere.setStatus("active");
+        enchere.setHighestBidderId(null);
+        enchere.setHighestBid(0);
+        enchere.setPokemonId(pokemonid);
+        enchere.setUserId(userid);
+        return enchere.getId();
+ }
 }
